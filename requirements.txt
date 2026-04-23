@@ -1,3 +1,3 @@
 flask
-tensorflow-cpu
+gunicorn
 numpy
