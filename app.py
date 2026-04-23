@@ -5,41 +5,40 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import os
 
-# Initialize app
 app = Flask(__name__)
 
-# Upload folder
+# Correctly point to static for web serving
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Create folder if not exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Load trained model
+# Load your model
 model = load_model('cifar10_model.keras')
 
-# CIFAR-10 class labels
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                'dog', 'frog', 'horse', 'ship', 'truck']
 
-
-# Home route
 @app.route('/', methods=['GET', 'POST'])
 def index():
     img_path = None
     top_predictions = None
 
     if request.method == 'POST':
-        file = request.files['file']
+        file = request.files.get('file')
 
-        if file:
-            # Save uploaded image
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        if file and file.filename != '':
+            # Save file
+            filename = file.filename
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-            img_path = filepath
+            
+            # This path is used in HTML: <img src="{{ img_path }}">
+            # We strip 'static/' because Flask serves static files automatically
+            img_path = filepath.replace('\\', '/') 
 
-            # Preprocess image
+            # Preprocess
             img = image.load_img(filepath, target_size=(32, 32))
             img_array = image.img_to_array(img)
             img_array = img_array / 255.0
@@ -47,13 +46,10 @@ def index():
 
             # Predict
             predictions = model.predict(img_array)
-
-            # Convert logits to probabilities
             probabilities = tf.nn.softmax(predictions[0]).numpy()
 
-            # Get top 3 predictions
+            # Get top 3
             top_indices = probabilities.argsort()[-3:][::-1]
-
             top_predictions = []
             for i in top_indices:
                 top_predictions.append({
@@ -61,11 +57,7 @@ def index():
                     "confidence": round(float(probabilities[i]) * 100, 2)
                 })
 
-    return render_template('index.html',
-                           img_path=img_path,
-                           top_predictions=top_predictions)
+    return render_template('index.html', img_path=img_path, top_predictions=top_predictions)
 
-
-# Run app
 if __name__ == '__main__':
     app.run(debug=True)
