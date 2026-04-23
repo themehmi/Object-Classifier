@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Vision | Minimal Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --accent: #ffffff;
+            --secondary: #888888;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-hover: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--accent);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- Animated Ambient Background --- */
+        .orb {
+            position: fixed;
+            width: 80vw;
+            height: 80vw;
+            max-width: 800px;
+            max-height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%);
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            filter: blur(80px);
+            animation: breathe 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes breathe {
+            from { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            to { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* --- Header --- */
+        header {
+            width: 100%;
+            max-width: 1000px;
+            padding: clamp(20px, 5vw, 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .system-status {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00ff88;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 24px 60px 24px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: clamp(40px, 8vw, 80px);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 300;
+            margin-bottom: 12px;
+            letter-spacing: -0.04em;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro p {
+            color: var(--secondary);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* --- Upload Component --- */
+        .upload-container {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .file-zone {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .file-zone:hover {
+            border-color: rgba(255,255,255,0.4);
+            background: var(--glass-hover);
+            transform: translateY(-4px);
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .btn-submit {
+            margin-top: 32px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 16px 48px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.05);
+            background: #e5e5e5;
+            box-shadow: 0 15px 30px rgba(255,255,255,0.1);
+        }
+
+        /* --- Results Grid --- */
+        .results-grid {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 48px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .result-card {
+            padding: 20px;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
+            transition: 0.3s ease;
+        }
+
+        .result-card:hover {
+            background: var(--glass-hover);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .result-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .result-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- Processing UI --- */
+        #loader {
+            display: none;
+            margin-top: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .scanner-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #fff, transparent);
+            display: none;
+            z-index: 10;
+            animation: scanMove 2.5s infinite linear;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0%; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Responsive Mobile Tweak */
+        @media (max-width: 480px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .file-zone {
+                aspect-ratio: 1/1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orb"></div>
+
+    <header>
+        <div class="logo">VISION.PRO</div>
+        <div class="system-status">
+            <div class="status-dot"></div>
+            <span>LIVE ENGINE</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="intro">
+            <h1>Intelligence</h1>
+            <p>Upload a source image to initiate neural classification.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="form" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="upload-container">
+                <label for="fileInput" class="file-zone" id="drop-area">
+                    <div id="scanner" class="scanner-bar"></div>
+                    {% if img_path %}
+                        <img src="{{ img_path }}" class="preview-img">
+                    {% else %}
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity: 0.5;">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <p id="fileName" style="margin-top: 16px; font-size: 0.9rem; font-weight: 300; opacity: 0.6;">Drop image here</p>
+                    {% endif %}
+                </label>
+            </div>
+            
+            <input type="file" name="file" id="fileInput" hidden required accept="image/*">
+            <button type="submit" class="btn-submit" id="submitBtn">Analyze Source</button>
+            <div id="loader">Processing...</div>
+        </form>
+
+        {% if top_predictions %}
+        <div class="results-grid">
+            {% for pred in top_predictions %}
+            <div class="result-card">
+                <span class="result-label">{{ pred.label }}</span>
+                <span class="result-value">{{ pred.confidence }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </main>
+
+    <script>
+        const form = document.getElementById('form');
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const loader = document.getElementById('loader');
+        const scanner = document.getElementById('scanner');
+        const submitBtn = document.getElementById('submitBtn');
+
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                if(fileNameDisplay) {
+                    fileNameDisplay.innerText = fileInput.files[0].name;
+                    fileNameDisplay.style.opacity = "1";
+                }
+            }
+        };
+
+        form.addEventListener('submit', () => {
+            loader.style.display = 'block';
+            scanner.style.display = 'block';
+            submitBtn.style.transform = 'scale(0.95)';
+            submitBtn.style.opacity = '0';
+            submitBtn.style.pointerEvents = 'none';
+        });
+
+        // Add drag & drop visual feedback
+        const dropArea = document.getElementById('drop-area');
+        ['dragenter', 'dragover'].forEach(name => {
+            dropArea.addEventListener(name, () => dropArea.style.borderColor = "#fff", false);
+        });
+        ['dragleave', 'drop'].forEach(name => {
+            dropArea.addEventListener(name, () => dropArea.style.borderColor = "var(--border)", false);
+        });
+    </script>
+</body>
+</html>
