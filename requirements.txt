@@ -1,4 +1,4 @@
-flask
-gunicorn
+streamlit
 numpy
-
+tensorflow
+Pillow
