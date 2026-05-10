@@ -26,18 +26,26 @@ st.markdown("""
         #MainMenu, footer, header {visibility: hidden;}
         .block-container { padding: 0 !important; }
         
-        /* Transparent uploader overlay */
+        /* Transparent uploader overlay: Responsive Positioning */
         .stFileUploader {
             position: absolute;
-            top: 360px;
+            top: 250px; /* Aligned with the visual main section */
             left: 50%;
             transform: translateX(-50%);
-            width: 580px;
+            width: 90%;
+            max-width: 580px;
             height: 326px;
-            z-index: 10;
+            z-index: 100;
             opacity: 0;
         }
-        [data-testid="stFileUploaderDropzone"] { height: 326px; }
+        [data-testid="stFileUploaderDropzone"] { 
+            height: 326px !important; 
+        }
+
+        /* Adjust uploader position on mobile */
+        @media (max-width: 768px) {
+            .stFileUploader { top: 200px; height: 250px; }
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -95,81 +103,109 @@ st.components.v1.html(f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {{ --bg: #0a0a0a; --accent: #ffffff; --secondary: #888888; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }}
+        :root {{ 
+            --bg: #0a0a0a; 
+            --accent: #ffffff; 
+            --secondary: #888888; 
+            --glass: rgba(255, 255, 255, 0.03); 
+            --border: rgba(255, 255, 255, 0.1); 
+        }}
         * {{ margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }}
-        body {{ background-color: var(--bg); color: var(--accent); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }}
+        body {{ 
+            background-color: var(--bg); 
+            color: var(--accent); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-x: hidden; 
+            padding-bottom: 50px;
+        }}
         
-        .orb {{ position: fixed; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%); top: -10%; left: 50%; transform: translateX(-50%); z-index: -1; filter: blur(80px); animation: breathe 8s infinite alternate ease-in-out; }}
-        @keyframes breathe {{ from {{ opacity: 0.5; transform: translateX(-50%) scale(1); }} to {{ opacity: 0.8; transform: translateX(-50%) scale(1.1); }} }}
+        /* Orb scaling */
+        .orb {{ 
+            position: fixed; 
+            width: 150vw; 
+            height: 150vw; 
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%); 
+            top: -20%; 
+            z-index: -1; 
+            filter: blur(80px); 
+        }}
         
-        header {{ width: 100%; max-width: 1000px; padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }}
-        .logo {{ font-weight: 600; letter-spacing: -0.05em; font-size: 1.1rem; opacity: 0.9; }}
-        .source-link {{ font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); }}
-        .system-status {{ font-size: 11px; font-weight: 600; color: var(--secondary); display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); }}
-        .status-dot {{ width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 12px #00ff88; }}
+        header {{ 
+            width: 100%; 
+            max-width: 1000px; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }}
         
-        main {{ width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; padding: 0 24px; }}
-        h1 {{ font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 300; background: linear-gradient(to bottom, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }}
+        main {{ 
+            width: 100%; 
+            max-width: 900px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 0 15px; 
+        }}
         
-        .file-zone {{ width: 100%; max-width: 580px; aspect-ratio: 16 / 9; border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--glass); backdrop-filter: blur(10px); position: relative; overflow: hidden; }}
-        .upload-btn-ui {{ padding: 12px 24px; background: white; color: black; border-radius: 30px; font-weight: 600; font-size: 0.8rem; margin-top: 15px; border: none; }}
-        
-        .master-prediction {{ width: 100%; max-width: 580px; margin-top: 24px; padding: 30px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; text-align: center; }}
-        .master-value {{ display: block; font-size: 2.5rem; font-weight: 600; color: white; margin: 5px 0; }}
-        .master-conf {{ font-size: 0.9rem; color: #00ff88; font-weight: 600; display: block; margin-bottom: 20px; }}
+        h1 {{ 
+            font-size: clamp(2.5rem, 10vw, 4rem); 
+            font-weight: 300; 
+            background: linear-gradient(to bottom, #fff, #888); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }}
 
-        /* Cylindrical Button */
-        .try-again-btn {{
-            background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 40px; border-radius: 50px; font-size: 11px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s;
+        /* Responsive File Zone */
+        .file-zone {{ 
+            width: 100%; 
+            max-width: 580px; 
+            aspect-ratio: 16 / 9; 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            background: var(--glass); 
+            backdrop-filter: blur(10px); 
+            position: relative; 
+            overflow: hidden; 
         }}
-        .try-again-btn:hover {{ background: white; color: black; }}
 
-        /* Scanner Bar: Now turns off based on a timeout logic in JS or CSS state */
-        .scanner-bar {{ 
-            position: absolute; top: 0; width: 100%; height: 3px; 
-            background: linear-gradient(to right, transparent, #fff, transparent); 
-            animation: scanMove 2s ease-in-out forwards; 
-            display: {"block" if uploaded_file else "none"}; 
-        }}
-        @keyframes scanMove {{ 
-            0% {{ top: 0%; opacity: 0; }} 
-            20% {{ opacity: 1; }} 
-            80% {{ opacity: 1; }} 
-            100% {{ top: 100%; opacity: 0; }} 
+        .master-prediction {{ 
+            width: 100%; 
+            max-width: 580px; 
+            margin-top: 24px; 
+            padding: clamp(15px, 5vw, 30px); 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 24px; 
         }}
         
-        .results-grid {{ width: 100%; max-width: 580px; margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }}
-        .result-card {{ padding: 18px; background: var(--glass); border-radius: 18px; border: 1px solid var(--border); }}
-        .result-label {{ font-size: 10px; text-transform: uppercase; color: var(--secondary); display: block; }}
-        .preview-img {{ width: 100%; height: 100%; object-fit: contain; }}
+        .master-value {{ 
+            font-size: clamp(1.5rem, 8vw, 2.5rem); 
+            font-weight: 600; 
+        }}
+
+        /* Results Grid Scaling */
+        .results-grid {{ 
+            width: 100%; 
+            max-width: 580px; 
+            margin-top: 20px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+            gap: 12px; 
+        }}
+
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {{
+            header {{ padding: 15px; }}
+            .logo {{ font-size: 0.9rem; }}
+            .source-link {{ display: none; }} /* Hide source on very small screens to save space */
+            .file-zone {{ aspect-ratio: 4 / 3; }}
+        }}
     </style>
 </head>
-<body>
-    <div class="orb"></div>
-    <header>
-        <div class="logo">VISION.PRO</div>
-        <div style="display:flex; align-items:center; gap:12px;">
-            <a href="https://github.com/themehmi/Object-Detection" target="_blank" class="source-link">SOURCE CODE</a>
-            <div class="system-status"><div class="status-dot"></div><span>LIVE ENGINE</span></div>
-        </div>
-    </header>
-    <main>
-        <div style="text-align:center; margin-bottom: 30px;">
-            <h1>Intelligence</h1>
-            <p style="color:var(--secondary); font-size: 0.9rem;">Neural classification active.</p>
-        </div>
-        <div class="file-zone">
-            <div class="scanner-bar"></div>
-            {"<img src='" + img_path_data + "' class='preview-img'>" if img_path_data else 
-            "<p style='color:var(--secondary); font-size: 0.9rem;'>Drop source here</p><button class='upload-btn-ui'>Click to Upload</button>"}
-        </div>
-        {top_prediction_html}
-        <div class="results-grid">{results_html}</div>
-    </main>
-</body>
-</html>
-""", height=1100 if uploaded_file else 750)
+...
+""", height=1200 if uploaded_file else 800)
