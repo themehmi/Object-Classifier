@@ -86,7 +86,7 @@ st.markdown("""
 
 # --- APP LOGIC ---
 
-uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png", "webp"], label_visibility="collapsed")
+uploaded_file = st.file_uploader("", type=['jpg', 'jpeg', 'png'])
 
 
 
